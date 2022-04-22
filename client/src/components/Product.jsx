@@ -60,7 +60,7 @@ const Product = ({item}) => {
   return (
     <Container>
         <Circle />
-        <Image src={item.image} />
+        <Image src={`http://localhost:5000/` + item.image} />
         <InfoBox>
             <Icon>
                 <MdCardTravel/>
