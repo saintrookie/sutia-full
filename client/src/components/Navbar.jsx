@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { MdOutlineSearch, MdShoppingCart } from "react-icons/md";
 import { mobile } from '../responsive';
-import { Input } from 'theme-ui';
+import { Badge, Input } from 'theme-ui';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Container = styled.div`
     height: auto;
@@ -86,36 +87,42 @@ const MenuItem = styled.div`
 `
 
 const Navbar = () => {
-  return (
-    <Container>
-        <Wrapper>
-             <Left>
-                <Language>EN</Language>
-                <SearchContainer>
-                    <InputX />
-                    <MdOutlineSearch style={{color: 'gray', fontSize: '16px'}}/>
-                </SearchContainer>
-             </Left>
-             <Center>
-                <Logo>SUTIA</Logo>
-             </Center>
-             <Right>
-                <MenuItem>
-                    <Link to="/register">REGISTER</Link>
-                </MenuItem>
-                <MenuItem>
-                    <Link to="/login">SIGN IN</Link>
-                </MenuItem>
-                <MenuItem>
-                    <MdShoppingCart />
-                </MenuItem>
-             </Right>
-             <SearchContainerMobile>
-                <Input sx={{ height: '40px', backgroundColor: 'white', border: '1px solid gainsboro' }} autoComplete="given-name" autofillBackgroundColor="highlight" placeholder='Search Here' />
-             </SearchContainerMobile>
-        </Wrapper>
-    </Container>
-  )
+
+    const quantity = useSelector(state=>state.cart.quantity);
+
+    return (
+        <Container>
+            <Wrapper>
+                    <Left>
+                    <Language>EN</Language>
+                    <SearchContainer>
+                        <InputX />
+                        <MdOutlineSearch style={{color: 'gray', fontSize: '16px'}}/>
+                    </SearchContainer>
+                    </Left>
+                    <Center>
+                    <Logo>SUTIA</Logo>
+                    </Center>
+                    <Right>
+                    <MenuItem>
+                        <Link to="/register">REGISTER</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/login">SIGN IN</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/cart">
+                            <MdShoppingCart size="35px" />
+                            <Badge style={{ position:'relative', top: '-25px', right:'10px', backgroundColor: 'red', borderRadius: '50% 50%'}}>{quantity}</Badge>
+                        </Link>
+                    </MenuItem>
+                    </Right>
+                    <SearchContainerMobile>
+                    <Input sx={{ height: '40px', backgroundColor: 'white', border: '1px solid gainsboro' }} autoComplete="given-name" autofillBackgroundColor="highlight" placeholder='Search Here' />
+                    </SearchContainerMobile>
+            </Wrapper>
+        </Container>
+    )
 }
 
 export default Navbar

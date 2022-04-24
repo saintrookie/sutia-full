@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image } from 'theme-ui'
 import Announcement from '../components/Announcement'
 import Footer from '../components/Footer'
@@ -7,7 +7,10 @@ import Navbar from '../components/Navbar'
 import Newsletter from '../components/Newsletter'
 import { RiAddFill, RiSubtractFill } from "react-icons/ri";
 import { mobile } from '../responsive'
-
+import { useLocation } from 'react-router-dom'
+import { publicRequest } from '../requestMethod'
+import { addProduct } from '../redux/cartRedux'
+import { useDispatch } from 'react-redux'
 
 
 const Container = styled.div`
@@ -128,56 +131,84 @@ const Button = styled.button`
 `
 
 const Product = () => {
-  return (
-    <Container>
-        <Navbar />
-        <Announcement />
-        <Wrapper>
-            <ImageContainer>
-                <Image src={ require('../image/underwear.jpg') } />
-            </ImageContainer>
-            <InfoContainer>
-                <Title>Uhuy Lingerie</Title>
-                <Desc>
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. 
-                    Veritatis facere, voluptas voluptate, ab hic blanditiis quam repudiandae reiciendis a quibusdam laborum doloribus. 
-                    Enim incidunt eaque impedit! At quae consequuntur vitae.
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere minima fuga, 
-                    saepe enim harum nisi obcaecati laboriosam porro, earum,
-                    dolore impedit nam deserunt reprehenderit iusto eum error repellendus sed officiis?
-                </Desc>
-                <Price>$29.99</Price>
-                <FilterContainer>
-                    <Filter>
-                        <FilterTitle>Colors: </FilterTitle>
-                        <FilterColor color="black" />
-                        <FilterColor color="red" />
-                    </Filter>
-                    <Filter>
-                        <FilterTitle>Size: </FilterTitle>
-                        <Select id="size">
-                            <Option value="xs" title="xs">XS</Option>
-                            <Option value="s" title="s">S</Option>
-                            <Option value="m" title="m">M</Option>
-                            <Option value="l" title="l">L</Option>
-                            <Option value="xl" title="xl">XL</Option>
-                        </Select>
-                    </Filter>
-                </FilterContainer>
-                <AddContainer>
-                    <AmountContainer>
-                        <IconAmount><RiSubtractFill /></IconAmount>
-                        <Amount>1</Amount>
-                        <IconAmount><RiAddFill /></IconAmount>
-                    </AmountContainer>
-                    <Button variant='primary'>Add To Cart</Button>
-                </AddContainer>
-            </InfoContainer>
-        </Wrapper>
-        <Newsletter />
-        <Footer />
-    </Container>
-  )
+
+    const location = useLocation();
+    const id = location.pathname.split("/")[2];
+    const [product, setProduct] = useState({});
+    const [quantity, setQuantity] = useState(1);
+    const [color, setColor] = useState("");
+    const [size, setSize] = useState("");
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const getProduct = async () => {
+            try{
+                const res = await publicRequest.get("/products/find/"+id);
+                setProduct(res.data);
+            }catch(err){
+
+            }
+        }
+        getProduct();
+    }, [id]);
+
+    const handleQuantity = (type) => {
+        if(type === "dec"){
+            quantity > 1 && setQuantity(quantity-1);
+        } else {
+            setQuantity(quantity+1);
+
+        }
+    }
+    
+    const handleCart = () => {
+        dispatch(addProduct({...product, quantity, color, size }));
+    }
+
+    return (
+        <Container>
+            <Navbar />
+            <Announcement />
+            <Wrapper>
+                <ImageContainer>
+                    <Image src={ `http://localhost:5000/` + product.image } />
+                </ImageContainer>
+                <InfoContainer>
+                    <Title>{ product.title }</Title>
+                    <Desc>
+                       { product.description }
+                    </Desc>
+                    <Price>$ {product.price}</Price>
+                    <FilterContainer>
+                        <Filter>
+                            <FilterTitle>Colors: </FilterTitle>
+                            {product.color?.map((c) => (
+                                <FilterColor color={c} key={c} onClick={()=>setColor(c)} />
+                            ))}
+                        </Filter>
+                        <Filter>
+                            <FilterTitle>Size: </FilterTitle>
+                            <Select id="size" onChange={(e)=>setSize(e.target.value)}>
+                                {product.size?.map((s) => (
+                                    <Option value={s} key={s}>{s}</Option>
+                                ))}
+                            </Select>
+                        </Filter>
+                    </FilterContainer>
+                    <AddContainer>
+                        <AmountContainer>
+                            <IconAmount onClick={()=>handleQuantity("dec")}><RiSubtractFill /></IconAmount>
+                            <Amount>{quantity}</Amount>
+                            <IconAmount onClick={()=>handleQuantity("inc")}><RiAddFill /></IconAmount>
+                        </AmountContainer>
+                        <Button variant='primary' onClick={handleCart}>Add To Cart</Button>
+                    </AddContainer>
+                </InfoContainer>
+            </Wrapper>
+            <Newsletter />
+            <Footer />
+        </Container>
+    )
 }
 
 export default Product

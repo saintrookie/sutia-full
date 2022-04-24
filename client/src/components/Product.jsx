@@ -1,6 +1,7 @@
 import React from 'react'
 import { HiHeart, HiSearch } from 'react-icons/hi'
 import { MdCardTravel } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { Image } from 'theme-ui'
 
@@ -57,23 +58,27 @@ const Icon = styled.div`
     margin: 10px;
 `
 const Product = ({item}) => {
-  return (
-    <Container>
-        <Circle />
-        <Image src={`http://localhost:5000/` + item.image} />
-        <InfoBox>
-            <Icon>
-                <MdCardTravel/>
-            </Icon>
-            <Icon>
-                <HiSearch />
-            </Icon>
-            <Icon>
-                <HiHeart />
-            </Icon>
-        </InfoBox>
-    </Container>
-  )
+
+
+    return (
+        <Container>
+            <Circle />
+            <Image src={`http://localhost:5000/` + item.image} />
+            <InfoBox>
+                <Icon>
+                    <MdCardTravel/>
+                </Icon>
+                <Icon>
+                    <Link to={`/product/${item._id}`}>
+                        <HiSearch />
+                    </Link>
+                </Icon>
+                <Icon>
+                    <HiHeart />
+                </Icon>
+            </InfoBox>
+        </Container>
+    )
 }
 
 export default Product

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import React from 'react'
 import { RiAddFill, RiSubtractFill } from 'react-icons/ri'
+import { useSelector } from 'react-redux'
 import { Label } from 'theme-ui'
 import Announcement from '../components/Announcement'
 import Footer from '../components/Footer'
@@ -96,6 +97,7 @@ const SummaryItemPrice = styled.div`
 const Product = styled.div`
     display: flex;
     justify-content: space-between;
+    margin-bottom: 2em;
 
     ${mobile({ display: 'block' })}
 
@@ -202,113 +204,67 @@ const Button = styled.button`
 `
 
 const Cart = () => {
-  return (
-    <Container>
-        <Navbar />
-        <Announcement />
-        <Wrapper>
-            <Title>YOUR CART</Title>
-            <Top>
-                <TopButton>CONTINUE SHOPPING</TopButton>
-                <TopTexts>
-                    <TopText>Shopping Bag(3)</TopText>
-                    <TopText>Wishlist</TopText>
-                </TopTexts>
-                <TopButton type="filled">CHECKOUT NOW</TopButton>
-            </Top>
-            <Bottom>
-                <Info>
-                    <Product>
-                        <ProductDetail>
-                            <Image src="https://images.unsplash.com/photo-1589565973501-c6da6f24156f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=464&q=80" />
-                            <Details>
-                                <ProductName>SWIMWEAR</ProductName>
-                                <ProductId><b>ID: </b>1584061634739</ProductId>
-                                <Label>
-                                   <ProductColor color="black" /> <ProductColor color="white" />
-                                </Label>
-                                <ProductSize><b>Size: </b>28 - 30</ProductSize>
-                            </Details>
-                        </ProductDetail>
-                        <PriceDetail>
-                            <ProductAmountContainer>
-                                <IconAmount><RiSubtractFill /></IconAmount>
-                                <Amount>1</Amount>
-                                <IconAmount><RiAddFill /></IconAmount>
-                            </ProductAmountContainer>
-                            <ProductPrice>$29.99</ProductPrice>
-                        </PriceDetail>
-                    </Product>
-                    <Hr></Hr>
-                    <Product>
-                        <ProductDetail>
-                            <Image src="https://images.unsplash.com/photo-1584061634739-88035e420618?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=435&q=80" />
-                            <Details>
-                                <ProductName>VS BLACK</ProductName>
-                                <ProductId><b>ID: </b>1584061634739</ProductId>
-                                <Label>
-                                   <ProductColor color="black" />
-                                </Label>
-                                <ProductSize><b>Size: </b>36B</ProductSize>
-                            </Details>
-                        </ProductDetail>
-                        <PriceDetail>
-                            <ProductAmountContainer>
-                                <IconAmount><RiSubtractFill /></IconAmount>
-                                <Amount>1</Amount>
-                                <IconAmount><RiAddFill /></IconAmount>
-                            </ProductAmountContainer>
-                            <ProductPrice>$129.99</ProductPrice>
-                        </PriceDetail>
-                    </Product>
-                    <Hr></Hr>
-                    <Product>
-                        <ProductDetail>
-                            <Image src="https://images.unsplash.com/photo-1643539293604-239cc115a150?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=619&q=80" />
-                            <Details>
-                                <ProductName>SORELLA 3PCS</ProductName>
-                                <ProductId><b>ID: </b>1643539293604</ProductId>
-                                <Label>
-                                   <ProductColor color="white" /> <ProductColor color="pink" />
-                                </Label>
-                                <ProductSize><b>Size: </b>All Size</ProductSize>
-                            </Details>
-                        </ProductDetail>
-                        <PriceDetail>
-                            <ProductAmountContainer>
-                                <IconAmount><RiSubtractFill /></IconAmount>
-                                <Amount>1</Amount>
-                                <IconAmount><RiAddFill /></IconAmount>
-                            </ProductAmountContainer>
-                            <ProductPrice>$59.99</ProductPrice>
-                        </PriceDetail>
-                    </Product>
-                </Info>
-                <Summary>
-                    <SummaryTitle>Order Summary</SummaryTitle>
-                    <SummaryItem>
-                        <SummaryItemText>Subtotal: </SummaryItemText>
-                        <SummaryItemPrice>$299.000</SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem>
-                        <SummaryItemText>Cost Shipping: </SummaryItemText>
-                        <SummaryItemPrice>$15.00</SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem>
-                        <SummaryItemText>Discount: </SummaryItemText>
-                        <SummaryItemPrice>-10%</SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem>
-                        <SummaryItemText>Total:</SummaryItemText>
-                        <SummaryItemPrice> $269.000</SummaryItemPrice>
-                    </SummaryItem>
-                    <Button variant="secondary">CHECKOUT NOW</Button>
-                </Summary>
-            </Bottom>
-        </Wrapper>
-        <Footer />
-    </Container>
-  )
+
+    const cart = useSelector(state=>state.cart);
+
+    return (
+        <Container>
+            <Navbar />
+            <Announcement />
+            <Wrapper>
+                <Title>YOUR CART</Title>
+                <Top>
+                    <TopButton>CONTINUE SHOPPING</TopButton>
+                    <TopTexts>
+                        <TopText>Shopping Bag(3)</TopText>
+                        <TopText>Wishlist</TopText>
+                    </TopTexts>
+                    <TopButton type="filled">CHECKOUT NOW</TopButton>
+                </Top>
+                <Bottom>
+                    <Info>
+                        {cart.product.map(products=> (
+                        <Product>
+                            <ProductDetail>
+                                <Image src={`http://localhost:5000/`+products.image} />
+                                <Details>
+                                    <ProductName>{products.title}</ProductName>
+                                    <ProductId><b>ID: </b>{products._id}</ProductId>
+                                    <Label>
+                                        <ProductColor color={products.color} /> <ProductColor color="white" />
+                                    </Label>
+                                    <ProductSize><b>Size: </b>{products.size}</ProductSize>
+                                </Details>
+                            </ProductDetail>
+                            <PriceDetail>
+                                <ProductAmountContainer>
+                                    <IconAmount><RiSubtractFill /></IconAmount>
+                                    <Amount>{products.quantity}</Amount>
+                                    <IconAmount><RiAddFill /></IconAmount>
+                                </ProductAmountContainer>
+                                <ProductPrice>${products.price}</ProductPrice>
+                            </PriceDetail>
+                        </Product>
+                        
+                        ))}
+                    </Info>
+                    <Summary>
+                        <SummaryTitle>Order Summary</SummaryTitle>
+                        <SummaryItem>
+                            <SummaryItemText>Subtotal: </SummaryItemText>
+                            <SummaryItemPrice>${cart.total}</SummaryItemPrice>
+                        </SummaryItem>
+                        <SummaryItem>
+                            <SummaryItemText>Total:</SummaryItemText>
+                            <SummaryItemPrice>${cart.total}</SummaryItemPrice>
+                        </SummaryItem>
+                        <Button variant="secondary">CHECKOUT NOW</Button>
+                    </Summary>
+                </Bottom>
+            </Wrapper>
+            <Footer />
+        </Container>
+    )
 }
 
 export default Cart

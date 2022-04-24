@@ -69,11 +69,11 @@ const ProductList = () => {
         <Container>
             <Navbar />
             <Announcement />
-            <Title>Products</Title>
+            <Title>{cat.toUpperCase()}</Title>
             <FilterContainer>
                 <Filter>
                     <FilterText>Filter Products:</FilterText>
-                    <Select id="colors" name="colors" onChange={handleFilters}>
+                    <Select id="color" name="color" onChange={handleFilters}>
                         <Option disabled>Select Colors</Option>
                         <Option value="white" title="white">white</Option>
                         <Option value="black" title="black">black</Option>
