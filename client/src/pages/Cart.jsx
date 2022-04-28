@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { RiAddFill, RiSubtractFill } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
 import { Label } from 'theme-ui'
@@ -7,6 +7,11 @@ import Announcement from '../components/Announcement'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import { mobile } from '../responsive'
+import StripeCheckout from "react-stripe-checkout";
+import { userRequest } from '../requestMethod'
+import { useNavigate } from 'react-router-dom';
+
+const KEY = process.env.REACT_APP_STRIPE;
 
 const Container = styled.div`
     width: 100%;
@@ -206,6 +211,28 @@ const Button = styled.button`
 const Cart = () => {
 
     const cart = useSelector(state=>state.cart);
+    const [stripeToken, setStripeToken] = useState(null);
+    const history = useNavigate();
+
+    const onToken = (token) => {
+        setStripeToken(token)
+    } 
+
+    useEffect(() => {
+        const makeRequest = async () => {
+            try{
+                const res = await userRequest.post("/checkout/payment", {
+                    tokenId: stripeToken.id,
+                    amount: cart.total * 100
+                    
+                })
+                history.push("/success", { data:res.data });
+            }catch(err){
+
+            }
+        }
+        stripeToken && makeRequest();
+    }, [stripeToken, cart.total, history]);
 
     return (
         <Container>
@@ -258,7 +285,16 @@ const Cart = () => {
                             <SummaryItemText>Total:</SummaryItemText>
                             <SummaryItemPrice>${cart.total}</SummaryItemPrice>
                         </SummaryItem>
-                        <Button variant="secondary">CHECKOUT NOW</Button>
+                       <StripeCheckout 
+                            name="sutia"
+                            image="https://avatars.githubusercontent.com/u/38722400v=4"
+                            billingAddress
+                            shippingAddress
+                            description={` Your total is $ ${cart.total} `}
+                            amount={cart.total*100}
+                            token={onToken}
+                            stripeKey={KEY}
+                       />
                     </Summary>
                 </Bottom>
             </Wrapper>
